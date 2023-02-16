@@ -19,7 +19,16 @@ This guide will show you how to set up an ingest pipeline to redact specific inf
     - This is required to run the NER model
 - Machine Learning node(s)
 
+
+
 # Installation
+
+## Option 1 - Python Script
+You can [run this jypyter python notbook](https://github.com/jeffvestal/pii_redaction/blob/main/assets/pii_redact_pipeline_setup.ipynb) to load the HF mode and ingest pipeline
+
+Alternatively see steps below for overview of installation
+
+## Option 2 Self Install
 
 ### 1. Load NER Model
 A compatible NER model can be loaded from Hugging Face model hub using [eland](https://github.com/elastic/eland)
