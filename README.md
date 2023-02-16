@@ -3,6 +3,10 @@
 # What is this
 This guide will show you how to set up an ingest pipeline to redact specific information on ingest. This will allow you to keep PII from being stored with an elastic search index.
 
+#### Short Self-Guided Demo
+[ela.st/pii-redaction-demo](https://ela.st/pii-redaction-demo)
+[<img src="https://raw.githubusercontent.com/jeffvestal/pii_redaction/main/assets/pii-pipeline-test-screenshot.png">](https://ela.st/pii-redaction-demo)
+
 
 # Main Components
 - NER model
