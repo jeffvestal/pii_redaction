@@ -3,6 +3,7 @@
 # What is this
 This guide will show you how to set up an ingest pipeline to redact specific information on ingest. This will allow you to keep PII from being stored with an elastic search index.
 
+
 # Main Components
 - NER model
     - An NER model is used to identify information (entities) which does not have a standard pattern or structure. The most common entities identified by these models are _people_, _organizations_, _locations_ 
