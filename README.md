@@ -22,7 +22,7 @@ A compatible NER model can be loaded from Hugging Face model hub using [eland](h
     - Any [Elastic compatible NER](https://www.elastic.co/guide/en/machine-learning/current/ml-nlp-model-ref.html#ml-nlp-model-ref-ner) model can be used.
 
 ### 2. Load Ingest Pipeline
-An example ingest pipeline config is provided in this [here](https://github.com/jeffvestal/piiredaction/configuration/ingest_pipeline.pii_redact.json)
+An example ingest pipeline config is provided in this [here](https://github.com/jeffvestal/pii_redaction/blob/main/configuration/ingest_pipeline.pii_redact.json)
 ```
 PUT _ingest/pipeline/pii_script-redact
 {
