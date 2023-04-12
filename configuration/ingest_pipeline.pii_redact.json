@@ -1,43 +1,61 @@
 {
-  "description": "PII redacting ingest pipeline",
-  "processors": [
-    {
-      "set": {
-        "field": "redacted",
-        "value": "{{{message}}}"
-      }
-    },
-    {
-      "inference": {
-        "model_id": "dslim__bert-base-ner",
-        "field_map": {
-          "message": "text_field"
+    "description": "PII redacting ingest pipeline",
+    "processors": [
+      {
+        "set": {
+          "field": "redacted",
+          "value": "{{{message}}}"
+        }
+      },
+      {
+        "inference": {
+          "model_id": "dslim__bert-base-ner",
+          "field_map": {
+            "message": "text_field"
+          }
+        }
+      },
+      {
+        "script": {
+          "lang": "painless",
+          "source": """String msg = ctx['message']; 
+        for (item in ctx['ml']['inference']['entities']) {
+          msg = msg.replace(item['entity'], '<' + item['class_name'] + '>')
+        }
+        ctx['redacted']=msg""",
+          "if": "return ctx['ml']['inference']['entities'].isEmpty() == false",
+          "tag": "ner_redact",
+          "description": "Redact NER entities"
+        }
+      },
+      {
+        "redact": {
+          "field": "redacted",
+          "patterns": [
+            "%{PHONE:PHONE}",
+            "%{SSN:SSN}"
+          ],
+          "pattern_definitions": {
+            "SSN": """\d{3}-?\d{2}-?\d{4}""",
+            "PHONE": """\d{3}-?\d{3}-?\d{4}"""
+          }
+        }
+      },
+      {
+        "remove": {
+          "field": [
+            "message",
+            "ml"
+          ]
         }
       }
-    },
-    {
-      "script": {
-        "lang": "painless",
-        "source": "String msg = ctx['message']; \n        for (item in ctx['ml']['inference']['entities']) {\n          msg = msg.replace(item['entity'], '<' + item['class_name'] + '>')\n        }\n        ctx['redacted']=msg",
-        "if": "return ctx['ml']['inference']['entities'].isEmpty() == false",
-        "tag": "ner_redact",
-        "description": "Redact NER entities"
+    ],
+    "on_failure": [
+      {
+        "set": {
+          "field": "failure",
+          "value": "pii_script-redact"
+        }
       }
-    },
-    {
-      "script": {
-        "source": "String fieldValue = ctx['redacted'];\n\nPattern pattern_ssn = /(\\d{3}-?\\d{2}-?\\d{4})/;\nPattern pattern_phone = /(\\d{3}?-?\\d{3}-?\\d{4})/;\n\nList patterns = new ArrayList();\npatterns.add(pattern_ssn);\npatterns.add(pattern_phone);\n\nfor (p in patterns) {\n    Matcher matcher = p.matcher(ctx['redacted']);\n    ctx['redacted'] = matcher.replaceAll(\"<redacted>\");\n}",
-        "tag": "regex_redact",
-        "description": "Redact regex patterns"
-      }
-    },
-    {
-      "remove": {
-        "field": [
-          "message",
-          "ml"
-        ]
-      }
-    }
-  ]
-}
+    ]
+  }
