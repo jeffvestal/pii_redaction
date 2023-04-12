@@ -11,8 +11,8 @@ This guide will show you how to set up an ingest pipeline to redact specific inf
 # Main Components
 - NER model
     - An NER model is used to identify information (entities) which does not have a standard pattern or structure. The most common entities identified by these models are _people_, _organizations_, _locations_ 
-- Regular Expresions (regex)
-    - A list of regex patterns can be configured to identify data which has a standard pattern (SSN, Credit Card Numbers, etc.)
+- Grok Patterns (Simlar to Regex)
+    - A list of grok patterns can be configured to identify data which has a standard pattern (SSN, Credit Card Numbers, etc.)
 
 # Requirements
 - Elastic Platinum or Enterprise license
@@ -49,10 +49,9 @@ PUT _ingest/pipeline/pii_script-redact
     1. Set `model_id` to the id the model is stored with in Elastic
         1. Kibana -> Machine Learning -> Trained Models -> listed under `id` column
         2. use the [GET Trained Models API](https://www.elastic.co/guide/en/elasticsearch/reference/8.6/get-trained-models.html#get-trained-models)
-1. Script Processor with Regex
-    1. Add new Regex patterns to match the patterns in your data
-        1. Create a new pattern variable with the pattern
-        2. Add that new variable to the `patterns.add()` list
+1. [Redact Processor](https://www.elastic.co/guide/en/elasticsearch/reference/current/redact-processor.html)
+    1. Add new Grok patterns to match the patterns in your data
+        1. Create one [grok pattern](https://www.elastic.co/guide/en/elasticsearch/reference/current/grok.html) per value you want to match and give it a name. This name will be used to mask.
 5. Configure Data to use the pipeline through one of these approaches
     1. Configure the process sending data to Elastic to use the ingest pipeline as [part of the indexing request](https://www.elastic.co/guide/en/elasticsearch/reference/current/ingest.html#add-pipeline-to-indexing-request)
     2. Configure the [default pipeline](https://www.elastic.co/guide/en/elasticsearch/reference/current/ingest.html#set-default-pipeline) in the index settigns
